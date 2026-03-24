@@ -1,0 +1,111 @@
+---
+description: Review a pull request from its URL. Use when the user shares a GitHub PR URL and wants to understand the changes, get a review summary, or identify potential issues. Explains changes clearly, highlights design decisions, and generates gentle questions for areas lacking clear intent.
+argument-hint: <PR URL> -- 例: https://github.com/owner/repo/pull/123
+---
+
+# PR レビュー支援
+
+## 前提
+
+このコマンドはレビュアーの「コードリーディング」を支援するためのものである。
+PRの変更を理解しやすく解説し、レビュアーが **判断（Judgment）** に集中できるようにする。
+
+## 実行手順
+
+### 1. PR情報の取得
+
+`$ARGUMENTS` から PR URL を受け取り、以下の情報を取得する。
+
+```bash
+# PR の基本情報
+gh pr view $PR_NUMBER --json title,body,author,baseRefName,headRefName,files,additions,deletions,commits
+
+# 差分の取得
+gh pr diff $PR_NUMBER
+
+# PR コメント（インラインコメント含む）
+gh api repos/{owner}/{repo}/pulls/{pr_number}/comments
+gh pr view $PR_NUMBER --json comments,reviews
+```
+
+### 2. 変更の全体像を解説
+
+以下の構造で、レビュアーが「何をどう読めばいいか」のガイドを提供する。
+
+```
+## 変更の全体像
+
+### この PR は何をしているか
+[PR の目的を1-3文で。説明文の要約ではなく、差分を読んだ上での理解]
+
+### 変更の構造
+[ファイル群を意味的なまとまりでグループ化して説明]
+- グループA: [目的] — `file1.ts`, `file2.ts`
+- グループB: [目的] — `file3.ts`
+
+### 読む順序の提案
+[依存関係や理解の流れを踏まえた、推奨する読み順]
+```
+
+### 3. 注目すべきポイントの提示
+
+差分を精読し、以下を報告する。
+
+#### 設計判断の評価
+
+- 選択されたアプローチは妥当か
+- 見落とされている代替案はないか
+- CLAUDE.md やrulesの設計原則との整合性
+
+#### 潜在的な問題
+
+問題がある場合のみ、以下のプレフィックスで報告する。
+
+プレフィックスは @~/.claude/commands/shared/review-prefixes.md を参照
+
+#### 良い判断
+
+具体的に優れていると思う設計判断があれば記載する。根拠なき称賛は不要。
+
+### 4. メンタルモデル不在の検出
+
+以下の兆候がある箇所を特定し、**柔らかい質問文**として提示する。
+
+検出基準は @~/.claude/commands/shared/mental-model-detection.md を参照。加えて、PR固有の兆候も確認する
+
+- PR説明文が「何を変えたか」しか書いておらず「なぜ」がない
+- インラインコメントがなく、複雑なロジックの意図が不明
+
+**質問文のトーン**
+
+詰問ではなく、理解のための対話を促す柔らかい質問にする。
+
+良い例:
+- 「この部分で `RetryPolicy` を3回に設定されていますが、この回数はどのような基準で決められましたか?」
+- 「`handleError` 内で全例外を catch されていますが、特定の例外のみ処理する設計も考えられそうです。意図的に広く取られている理由があれば教えていただけますか?」
+- 「こちらのロジックは〇〇と似た構造に見えますが、共通化せず個別に実装された背景がありましたら共有いただけると助かります」
+
+悪い例:
+- 「なぜこうしたんですか?」（漠然すぎる）
+- 「これは間違っています」（判断の押しつけ）
+- 「理解していますか?」（人格への攻撃）
+
+### 5. レビューサマリの出力
+
+最後に、レビュアーが効率的にレビューできるよう、以下を出力する。
+
+```
+## レビューサマリ
+
+- **変更規模**: [S/M/L] ([追加行数]+, [削除行数]-, [ファイル数] files)
+- **リスク領域**: [認証/データ削除/外部API/なし など]
+- **レビュー推定負荷**: [軽/中/重]
+- **特に確認してほしい箇所**: [ファイル:行番号 の形式で]
+```
+
+## 注意事項
+
+- PR作成者への敬意を忘れない。批判ではなく理解のための分析
+- 作成者の説明文やコメントがある場合は、それを尊重した上で差分と照合する
+- 自動化で検出可能な問題（lint違反、型エラー）にはあえて言及しない
+- 「問題なし」も価値ある結論。無理に指摘を絞り出さない
