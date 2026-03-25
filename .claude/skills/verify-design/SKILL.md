@@ -1,5 +1,5 @@
 ---
-description: Pre-implementation design verification. Use BEFORE writing any code, right after receiving an implementation task. Trigger when the task involves multi-file changes, state transitions, external system integration, auth changes, new architectural patterns, or complex business logic with many conditionals. Skip for typo fixes, style changes, or minor modifications following existing patterns.
+description: Pre-implementation design verification. Use BEFORE writing any code, right after receiving an implementation task. Trigger when the task involves multi-file changes, state transitions, external system integration, auth changes, new architectural patterns, or complex business logic with many conditionals. Also trigger when requirements are ambiguous, incomplete, or verbally communicated without formal specs — the absence of a specification is itself a reason to verify, not a reason to skip. Skip for typo fixes, style changes, or minor modifications following existing patterns.
 ---
 
 # 設計検証
