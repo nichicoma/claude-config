@@ -65,9 +65,9 @@ typo 修正や既存パターンの軽微な修正では発動しない。
 
 各 plugin は `source: "./"`（リポジトリ root）を共有し、`skills` / `commands` フィールドで含める対象を絞り込んでいる。新しい skill や command を追加するときは、`skills/` または `commands/` にファイルを置き、`marketplace.json` の `plugins` に entry を 1つ足す。
 
-## 管理者向け: marketplace の更新
+## 最新版を取り込む
 
-plugin を追加・変更したら、利用者は次で最新を取り込む。
+skill や command を編集して GitHub に push したあと、手元の Claude Code に反映するには次を実行する。
 
 ```bash
 /plugin marketplace update nichicoma
