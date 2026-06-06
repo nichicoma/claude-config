@@ -1,0 +1,56 @@
+{
+  "name": "nichicoma",
+  "owner": {
+    "name": "nichicoma",
+    "email": "yutaro@nichicoma.co.jp"
+  },
+  "metadata": {
+    "description": "ニチコマ合同会社の Claude Code skill / command 配布マーケットプレイス"
+  },
+  "plugins": [
+    {
+      "name": "verify-design",
+      "source": "./",
+      "skills": ["./skills/verify-design"],
+      "description": "実装前の設計検証スキル。設計上の穴を対話で潰してから着手する。"
+    },
+    {
+      "name": "theory-check",
+      "source": "./",
+      "skills": ["./skills/theory-check"],
+      "description": "実装後のメンタルモデル検証スキル。なぜこの設計にしたかを確認し、メンタルモデルの形成を促す。"
+    },
+    {
+      "name": "code-review",
+      "source": "./",
+      "skills": ["./skills/code-review"],
+      "description": "ローカル差分のレビュースキル。設計の妥当性・意図の明確さ・プロダクトとの一貫性を判断する。"
+    },
+    {
+      "name": "create-pr",
+      "source": "./",
+      "commands": ["./commands/create-pr.md"],
+      "description": "PR 作成コマンド。設計意図・トレードオフ・影響範囲を織り込んだ説明文とインラインコメントを生成する。"
+    },
+    {
+      "name": "review-pr",
+      "source": "./",
+      "commands": ["./commands/review-pr.md"],
+      "description": "PR レビュー支援コマンド。PR URL から変更を解説し、問題点や確認すべき質問を提示する。"
+    },
+    {
+      "name": "nichicoma-all",
+      "source": "./",
+      "skills": [
+        "./skills/verify-design",
+        "./skills/theory-check",
+        "./skills/code-review"
+      ],
+      "commands": [
+        "./commands/create-pr.md",
+        "./commands/review-pr.md"
+      ],
+      "description": "全部入り。skill 3個（verify-design / theory-check / code-review）と command 2個（create-pr / review-pr）をまとめて導入する。"
+    }
+  ]
+}
